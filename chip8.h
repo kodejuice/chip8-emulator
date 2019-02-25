@@ -46,13 +46,13 @@ private:
 	word stack[16] = {0};			// Stack
 	word sp = 0;					// Stack pointer
 
-	byte delay = 0;
-	byte sound = 0;
+	byte DT = 0;					// delay timer
+	byte ST = 0;					// sound timer
 
 	size_t program_size;
 
 public:
-	byte key[16] = {0};
+	bool key_pressed[16];
 	byte screen[64*32] = {0};
 
 	void emulate_op();
