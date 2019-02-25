@@ -55,7 +55,9 @@ bool Chip8::loadROM(string file) {
 
 
 /**
- * Emulate an instruction
+ * Intepreter
+ *
+ * inteprete an instruction
  *  a single cycle
  *
  * See chip8 instruction set at http://devernay.free.fr/hacks/chip8/C8TECH10.HTM#3.1
@@ -338,6 +340,18 @@ void Chip8::emulate_op() {
 
 		default:
 			not_handled(msb);
+	}
+
+	// Time & Sound
+
+	// delay timer
+	if (DT > 0)
+		DT -= 1;
+
+	// sound timer
+	if (ST > 0) {
+		// sound: beep
+		ST -= 1;
 	}
 }
 
