@@ -101,9 +101,9 @@ string decode(int i, byte msb, byte lsb) {
 				case 0x18: {sprintf(ln,"%s V%01X", "setsound", msb&0xf), str+=ln;} break;
 				case 0x1e: {sprintf(ln,"%s I, V%01X", "mov", msb&0xf), str+=ln;} break;
 				case 0x29: {sprintf(ln,"%s I, V%01X", "spritei", msb&0xf), str+=ln;} break;
-				case 0x33: {sprintf(ln,"%s (I), V%01X", "bcd", msb&0xf), str+=ln;} break;
-				case 0x55: {sprintf(ln,"%s (I), V0-V%01X", "push", msb&0xf), str+=ln;} break;
-				case 0x65: {sprintf(ln,"%s V0-V%01X, (I)", "pop", msb&0xf), str+=ln;} break;
+				case 0x33: {sprintf(ln,"%s [I], V%01X", "bcd", msb&0xf), str+=ln;} break;
+				case 0x55: {sprintf(ln,"%s [I], V0-V%01X", "mov", msb&0xf), str+=ln;} break;
+				case 0x65: {sprintf(ln,"%s V0-V%01X, [I]", "mov", msb&0xf), str+=ln;} break;
 				default: {sprintf(ln,"unknown F"), str+=ln;} break;
 			}
 			break;
