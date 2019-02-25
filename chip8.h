@@ -40,7 +40,7 @@ private:
 	byte memory[4*1024] = {0};		// 4KB RAM
 	byte V[16] = {0};				// 8bit registers
 
-	word I;							// Index register
+	word I = 0;							// Index register
 	word pc = 0x200;				// program Counter / Instruction pointer
 
 	word stack[16] = {0};			// Stack
