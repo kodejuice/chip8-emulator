@@ -96,7 +96,7 @@ string decode(int i, byte msb, byte lsb) {
 			switch(lsb)
 			{
 				case 0x07: {sprintf(ln,"%s V%01X", "getdelay", msb&0xf), str+=ln;} break;
-				case 0x0a: {sprintf(ln,"%s V%01X", "waitket", msb&0xf), str+=ln;} break;
+				case 0x0a: {sprintf(ln,"%s V%01X", "waitkey", msb&0xf), str+=ln;} break;
 				case 0x15: {sprintf(ln,"%s V%01X", "setdelay", msb&0xf), str+=ln;} break;
 				case 0x18: {sprintf(ln,"%s V%01X", "setsound", msb&0xf), str+=ln;} break;
 				case 0x1e: {sprintf(ln,"%s I, V%01X", "mov", msb&0xf), str+=ln;} break;
