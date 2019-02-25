@@ -9,7 +9,7 @@
 /**
  * Load ROM from file into memory
  */
-bool Chip8::loadROM(string file) {
+bool Chip8::load_program(string file) {
 	FILE *f = fopen(file.c_str(), "rb");
 
 	if (f == NULL) {    
@@ -42,7 +42,7 @@ bool Chip8::loadROM(string file) {
 	}
 
 	// load ROM into memory (RAM)
-	for (int i=pc, j=0; i < int(pc + program_size); ++i) {
+	for (int i=PC, j=0; i < int(PC + program_size); ++i) {
 		memory[i] = (byte) rom[j++];
 	}
 
@@ -63,7 +63,7 @@ bool Chip8::loadROM(string file) {
  * See chip8 instruction set at http://devernay.free.fr/hacks/chip8/C8TECH10.HTM#3.1
  */
 void Chip8::emulate_op() {
-	byte* op = &memory[pc];
+	byte* op = &memory[PC];
 	byte msb = *op, lsb = *(op + 1);
 
 	int tmp;
@@ -83,13 +83,13 @@ void Chip8::emulate_op() {
 				// 0x0e0
 				case 0xe0: // clr
 					memset(screen, 0, 2048);
-					pc += 2;
+					PC += 2;
 					break;
 
 				// 0x0ee
 				case 0xee: // ret
-					pc = stack[--sp];
-					pc += 2;
+					PC = stack[--sp];
+					PC += 2;
 					break;
 
 				default:
@@ -100,43 +100,43 @@ void Chip8::emulate_op() {
 
 		// 0x1nnn
 		case 0x1: // jmp nnn
-			pc = nnn;
+			PC = nnn;
 			break;
 
 		// 0x2nnn
 		case 0x2: // call nnn
-			stack[sp++] = pc;
-			pc = nnn;
+			stack[sp++] = PC;
+			PC = nnn;
 			break;
 
 		// 03xkk
 		case 0x3: // jeq Vx, Vkk
-			if (V[x] == kk) pc += 2;
-			pc += 2;
+			if (V[x] == kk) PC += 2;
+			PC += 2;
 			break;
 
 		// 0x4xkk
 		case 0x4: //jneq Vx, Vkk
-			if (V[x] != kk) pc += 2;
-			pc += 2;
+			if (V[x] != kk) PC += 2;
+			PC += 2;
 			break;
 
 		// 0x5xy0
 		case 0x5: // jeqr Vx, Vy
-			if (V[x] == V[y]) pc += 2;
-			pc += 2;
+			if (V[x] == V[y]) PC += 2;
+			PC += 2;
 			break;
 
 		// 0x6xkk
 		case 0x6: // mov Vx, kk
 			V[x] = kk;
-			pc += 2;
+			PC += 2;
 			break;
 
 		// 0x7xkk
 		case 0x7: // add Vx, Vkk
 			V[x] += V[kk];
-			pc += 2;
+			PC += 2;
 			break;
 
 		// 0x8xyn
@@ -145,25 +145,25 @@ void Chip8::emulate_op() {
 				// 0x8xy0
 				case 0x0: // mov Vx, Vy
 					V[x] = V[y];
-					pc += 2;
+					PC += 2;
 					break;
 
 				// 0x8xy1
 				case 0x1: // or Vx, Vy
 					V[x] |= V[y];
-					pc += 2;
+					PC += 2;
 					break;
 
 				// 0x8xy2
 				case 0x2: // and Vx, Vy
 					V[x] = V[x] & V[y];
-					pc += 2;
+					PC += 2;
 					break;
 
 				// 0x8xy3
 				case 0x3: // xor Vx, Vy
 					V[x] = V[x] ^ V[y];
-					pc += 2;
+					PC += 2;
 					break;
 
 				// 0x8xy4
@@ -171,35 +171,35 @@ void Chip8::emulate_op() {
 					tmp = V[x] + V[y];
 					V[0xF] = (tmp > 0xff); // VF (carry)
 					V[x] += V[y];
-					pc += 2;
+					PC += 2;
 					break;
 
 				// 0x8xy5
 				case 0x5: // sub Vx, Vy
 					V[0xF] = V[x] > V[y];
 					V[x] -= V[y];
-					pc += 2;
+					PC += 2;
 					break;
 
 				// 0x8xy6
 				case 0x6: // shr Vx
 					V[0xF] = V[x]&1;
 					V[x] >>= 1;
-					pc += 2;
+					PC += 2;
 					break;
 
 				// 0x8xy7
 				case 0x7: // subb Vy, Vx
 					V[0xF] = V[y] > V[x];
 					V[y] -= V[x];
-					pc += 2;
+					PC += 2;
 					break;
 
 				// 0x8ye
 				case 0xe: // shl Vx
 					V[0xF] = (V[x]&(1<<7)) != 0;
 					V[x] <<= 1;
-					pc += 2;
+					PC += 2;
 					break;
 
 				default:
@@ -210,25 +210,25 @@ void Chip8::emulate_op() {
 
 		// 9xy0
 		case 0x9: // jneqr Vx, Vy
-			if (V[x] != V[y]) pc += 2;
-			pc += 2;
+			if (V[x] != V[y]) PC += 2;
+			PC += 2;
 			break;
 
 		// Annn
 		case 0xA: // mov I, [nnn]
 			I = nnn;
-			pc += 2;
+			PC += 2;
 			break;
 
 		// 0xBnnn
 		case 0xB: // jmp V0+nnn
-			pc = V[0x0] + nnn;
+			PC = V[0x0] + nnn;
 			break;
 
 		// 0xCxkk
 		case 0xC: // rnd Vx, kk
 			V[x] = (rand()%256) & kk;
-			pc += 2;
+			PC += 2;
 			break;
 
 
@@ -236,7 +236,7 @@ void Chip8::emulate_op() {
 		// -----
 		// 0xDxyn
 		case 0xD: // draw Vx, Vy, n
-			pc += 2;
+			PC += 2;
 			break;
 
 
@@ -245,14 +245,14 @@ void Chip8::emulate_op() {
 			switch (lsb) {
 				// 0xE9E
 				case 0x9E: // jkey Vx
-					if (key_pressed[V[x]]) pc += 2;
-					pc += 2;
+					if (key_pressed[V[x]]) PC += 2;
+					PC += 2;
 					break;
 
 				// 0xA1
 				case 0xA1: // jnkey Vx
-					if (!key_pressed[V[x]]) pc += 2;
-					pc += 2;
+					if (!key_pressed[V[x]]) PC += 2;
+					PC += 2;
 					break;
 			}
 		}
@@ -264,7 +264,7 @@ void Chip8::emulate_op() {
 				// 0xFx07
 				case 0x07: // getdelay Vx
 					V[x] = DT;
-					pc += 2;
+					PC += 2;
 					break;
 
 				// 0xFx0A
@@ -278,32 +278,32 @@ void Chip8::emulate_op() {
 					}
 
 					if (!p) return;
-					pc += 2;
+					PC += 2;
 					break;
 				}
 
 				// 0xFx15
 				case 0x15: // setdelay Vx
 					DT = V[x];
-					pc += 2;
+					PC += 2;
 					break;
 
 				// 0xFx18
 				case 0x18: // setsound Vx
 					ST = V[x];
-					pc += 2;
+					PC += 2;
 					break;
 
 				// 0xFx1E
 				case 0x1E: // mov I, Vx
 					I += V[x];
-					pc += 2;
+					PC += 2;
 					break;
 
 				// 0xFx29
 				case 0x29: // spritei I, Vx
 					I = 5 * V[x];
-					pc += 2;
+					PC += 2;
 					break;
 
 				// 0xFx33
@@ -315,21 +315,21 @@ void Chip8::emulate_op() {
 					a = tmp;
 
 					memory[I] = a, memory[I+1] = b, memory[I+2] = c;
-					pc += 2;
+					PC += 2;
 					break;
 
 				// 0xFx55
 				case 0x55: // mov [I], V0-VF
 					for (int i = 0; i <= x; ++i)
 						memory[I+i] = V[i];
-					pc += 2;
+					PC += 2;
 					break;
 
 				// 0xFx65
 				case 0x65: // mov V0-VF, [I]
 					for (int i = 0; i <= x; ++i)
 						V[i] = memory[I+i];
-					pc += 2;
+					PC += 2;
 					break;
 
 				default:

@@ -41,7 +41,7 @@ private:
 	byte V[16] = {0};				// 8bit registers
 
 	word I = 0;							// Index register
-	word pc = 0x200;				// program Counter / Instruction pointer
+	word PC = 0x200;				// program Counter / Instruction pointer
 
 	word stack[16] = {0};			// Stack
 	word sp = 0;					// Stack pointer
@@ -56,7 +56,7 @@ public:
 	byte screen[64*32] = {0};
 
 	void emulate_op();
-	bool loadROM (std::string file);
+	bool load_program (std::string file);
 
 	std::string disassemble (void);
 
