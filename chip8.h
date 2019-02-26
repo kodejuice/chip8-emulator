@@ -39,13 +39,13 @@ byte chip8_fonts[5*16] =
 class Chip8 {
 private:
 	byte memory[4*1024] = {0};		// 4KB RAM
-	byte V[16] = {0};				// 8bit registers
+	byte V[16] = {0};
 
-	word I = 0;							// Index register
-	word PC = 0x200;				// program Counter / Instruction pointer
+	word I = 0;						// Index register
+	word PC = 0x200;				// Program Counter / Instruction pointer
 
-	word stack[16] = {0};			// Stack
-	word sp = 0;					// Stack pointer
+	word sp = 0;
+	word stack[16] = {0};
 
 	byte DT = 0;					// delay timer
 	byte ST = 0;					// sound timer
