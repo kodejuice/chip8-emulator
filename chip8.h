@@ -2,6 +2,7 @@
 #define C8H
 
 #include <ios>
+#include <random>
 #include <cstdio>
 #include <string.h>
 #include <stdint.h>
