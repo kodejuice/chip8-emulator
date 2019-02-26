@@ -10,13 +10,13 @@ mt19937 rnd{};
 
 
 /**
- * Load ROM from file into memory
+ * Load ROM into memory
  */
 bool Chip8::load_program(string file) {
 	FILE *f = fopen(file.c_str(), "rb");
 
-	if (f == NULL) {    
-		printf("error: Couldn't open '%s'\n", file.c_str());    
+	if (f == NULL) {
+		printf("Error: Couldn't open '%s'\n", file.c_str());    
 		return false;
 	}
 
@@ -27,10 +27,6 @@ bool Chip8::load_program(string file) {
 
 	// allocate memory for ROM (buffer)
 	byte* rom = (byte*) malloc(sizeof(byte) * program_size);
-	if (rom == NULL) {
-		cerr << "Couldn't allocate memory for ROM" << endl;
-		return false;
-	}
 
 	// read program into buffer
 	fread(rom, sizeof(byte), program_size, f);
@@ -49,9 +45,7 @@ bool Chip8::load_program(string file) {
 
 
 /**
- * Intepreter
- *
- * inteprete an instruction
+ * Interprete an instruction
  *  a single cycle
  *
  * See chip8 instruction set at http://devernay.free.fr/hacks/chip8/C8TECH10.HTM#3.1
@@ -59,25 +53,23 @@ bool Chip8::load_program(string file) {
 void Chip8::emulate_op() {
 	byte* op = &memory[PC];
 	byte msb = *op, lsb = *(op + 1);
+	int tmp;
 
 	// increment program counter
 	//  point to next instruction
 	PC += 2;
 
-	int tmp;
-	const byte nnn = ((msb & 0xf) << 8) | lsb; // address (from opcode)
-
-	// 0x_xkk
-	// 0x_xyk
-	// 0x_xyn
-	// _ => 0-F
-	const byte x = msb&0xf, kk = lsb, y = kk >> 4, n = kk&0xf;
+	// Get bit-fields from instruction/opcode
+	const byte x = msb&0xf,
+			kk = lsb,						// 0x__kk
+			y = kk >> 4,					// 0x_y__
+			n = kk&0xf,						// 0x___n
+			nnn = ((msb & 0xf) << 8) | lsb; // 0x_nnn
 
 	// alliases for registers
 	byte &Vx = V[x], &Vy = V[y], &VF = V[0xF];
 
 	switch (msb >> 4) {
-
 		// 0x0e-
 		case 0x0: {
 			switch (lsb) {
@@ -183,7 +175,7 @@ void Chip8::emulate_op() {
 
 				// 0x8ye
 				case 0xe: // shl Vx
-					VF = (Vx&(1<<7)) != 0;
+					VF = Vx >> 7;
 					Vx <<= 1;
 					break;
 
@@ -199,7 +191,7 @@ void Chip8::emulate_op() {
 			break;
 
 		// Annn
-		case 0xA: // mov I, [nnn]
+		case 0xA: // mov I, nnn
 			I = nnn;
 			break;
 
@@ -246,6 +238,7 @@ void Chip8::emulate_op() {
 					break;
 
 				// 0xFx0A
+				// TODO: Fix !
 				case 0x0A: { // waitkey Vx
 					bool p = 0;
 					for (int i = 0x0; i <= 0xF; ++i) {
@@ -292,14 +285,14 @@ void Chip8::emulate_op() {
 
 				// 0xFx55
 				case 0x55: // mov [I], V0-VF
-					for (int i = 0; i <= x; ++i)
-						memory[I+i] = V[i];
+					for (int p = 0; p <= x; ++p)
+						memory[I+p] = V[p];
 					break;
 
 				// 0xFx65
 				case 0x65: // mov V0-VF, [I]
-					for (int i = 0; i <= x; ++i)
-						V[i] = memory[I+i];
+					for (int p = 0; p <= x; ++p)
+						V[p] = memory[I+p];
 					break;
 
 				default:
@@ -326,6 +319,13 @@ void Chip8::emulate_op() {
 }
 
 
+// TODO: Study screen display
+// TODO: Implement Draw
+// 
+// TODO: Study SDL
+// TODO: Waiting key
+// TODO: Beep Sound
+
 
 /*
 
@@ -338,7 +338,6 @@ Sprites are XORed onto the existing screen. If this causes any pixels to be eras
 If the sprite is positioned so part of it is outside the coordinates of the display, it wraps around to the opposite side of the screen.
 
 See instruction 8xy3 for more information on XOR, and section 2.4, Display, for more information on the Chip-8 screen and sprites.
-
 
 
 */
