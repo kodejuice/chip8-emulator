@@ -62,7 +62,7 @@ void Chip8::emulate_op() {
 	// Get bit-fields from instruction/opcode
 	const byte x = msb&0xf,
 			kk = lsb,						// 0x__kk
-			y = kk >> 4,					// 0x_y__
+			y = kk >> 4,					// 0x__y_
 			n = kk&0xf,						// 0x___n
 			nnn = ((msb & 0xf) << 8) | lsb; // 0x_nnn
 
