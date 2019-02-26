@@ -21,7 +21,7 @@ string Chip8::disassemble() {
 	byte lsb, msb;
 	string str = "";
 
-	for (int i=pc; i < (pc + program_size); i+=2) {
+	for (int i=PC; i < (PC + program_size); i+=2) {
 		msb = memory[i], lsb = memory[i+1];
 
 		str += decode(i, msb, lsb) + "\n";
