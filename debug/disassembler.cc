@@ -51,7 +51,7 @@ string decode(int i, byte msb, byte lsb) {
 			{
 				case 0xe0: {sprintf(ln,"%s","clear"), str+=ln;} break;
 				case 0xee: {sprintf(ln,"%s","ret"), str+=ln;} break;
-				default: {sprintf(ln,"unknown 0"), str+=ln;} break;
+				default: {sprintf(ln,"unknown"), str+=ln;} break;
 			}
 			break;
 		case 0x1: {sprintf(ln,"%s 0x%03x", "jmp", ADDR), str+=ln;} break;
@@ -75,7 +75,7 @@ string decode(int i, byte msb, byte lsb) {
 					case 6: {sprintf(ln,"%s V%01X, V%01X", "shr", msb&0xf, lsb>>4), str+=ln;} break;
 					case 7: {sprintf(ln,"%s V%01X, V%01X", "subb", msb&0xf, lsb>>4), str+=ln;} break;
 					case 0xe: {sprintf(ln,"%s V%01X, V%01X", "shl", msb&0xf, lsb>>4), str+=ln;} break;
-					default: {sprintf(ln,"unknown 8"), str+=ln;} break;
+					default: {sprintf(ln,"unknown"), str+=ln;} break;
 				}
 			}
 			break;
@@ -89,7 +89,7 @@ string decode(int i, byte msb, byte lsb) {
 			{
 				case 0x9E: {sprintf(ln,"%s V%01X", "jkey", msb&0xf), str+=ln;} break;
 				case 0xA1: {sprintf(ln,"%s V%01X", "jnkey", msb&0xf), str+=ln;} break;
-				default: {sprintf(ln,"unknown E"), str+=ln;} break;
+				default: {sprintf(ln,"unknown"), str+=ln;} break;
 			}
 			break;
 		case 0xf: 
@@ -104,7 +104,7 @@ string decode(int i, byte msb, byte lsb) {
 				case 0x33: {sprintf(ln,"%s [I], V%01X", "bcd", msb&0xf), str+=ln;} break;
 				case 0x55: {sprintf(ln,"%s [I], V0-V%01X", "mov", msb&0xf), str+=ln;} break;
 				case 0x65: {sprintf(ln,"%s V0-V%01X, [I]", "mov", msb&0xf), str+=ln;} break;
-				default: {sprintf(ln,"unknown F"), str+=ln;} break;
+				default: {sprintf(ln,"unknown"), str+=ln;} break;
 			}
 			break;
 	}
