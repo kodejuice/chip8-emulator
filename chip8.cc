@@ -361,16 +361,4 @@ void Chip8::emulate_op() {
 	}
 	#undef not_handled
 
-
-	// Time & Sound
-
-	// delay timer
-	if (DT > 0)
-		DT -= 1;
-
-	// sound timer
-	if (ST > 0) {
-		// sound: beep
-		ST -= 1;
-	}
 }
