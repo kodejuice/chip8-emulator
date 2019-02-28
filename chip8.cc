@@ -1,13 +1,22 @@
+/**
+ * Chip8 Emulator
+ * 
+ * chip8.cc
+ * 
+ * 	Contains code to load a program,
+ *   and the instruction interpreter.
+ *
+ * (C) Sochima Biereagu, 2019
+*/
+
 #include "chip8.h"
-
-
-
-#define not_handled(op)\
-	printf("\nUnrecognized instruction: %04x\n", op); exit(2);
-
 
 mt19937 rnd{};
 
+// TODO: Implement emulator loop
+// TODO: Study SDL
+// TODO: Waiting key
+// TODO: Beep Sound
 
 /**
  * Load ROM into memory
@@ -15,10 +24,8 @@ mt19937 rnd{};
 bool Chip8::load_program(string file) {
 	FILE *f = fopen(file.c_str(), "rb");
 
-	if (f == NULL) {
-		printf("Error: Couldn't open '%s'\n", file.c_str());    
-		return false;
-	}
+	if (f == NULL) 
+		return printf("Error: Couldn't open '%s'\n", file.c_str()), false;
 
 	// get file size
 	fseek(f, 0L, SEEK_END);
@@ -31,7 +38,7 @@ bool Chip8::load_program(string file) {
 	// read program into buffer
 	fread(rom, sizeof(byte), program_size, f);
 
-	// load program into memory
+	// load program from buffer into memory
 	for (int i=PC, j=0; i < int(PC + program_size); ++i) {
 		memory[i] = (byte) rom[j++];
 	}
@@ -51,7 +58,10 @@ bool Chip8::load_program(string file) {
  * See chip8 instruction set at http://devernay.free.fr/hacks/chip8/C8TECH10.HTM#3.1
  */
 void Chip8::emulate_op() {
-	byte* op = &memory[PC];
+	#define not_handled(op)\
+		printf("\nUnrecognized instruction: %04x\n", op); exit(2);
+
+	byte *op = &memory[PC];
 	byte msb = *op, lsb = *(op + 1);
 	int tmp;
 
@@ -60,11 +70,11 @@ void Chip8::emulate_op() {
 	PC += 2;
 
 	// Get bit-fields from instruction/opcode
-	const byte x = msb&0xf,
+	const byte x = msb&0xf,					// 0x_x__
+			y = lsb >> 4,					// 0x__y_
 			kk = lsb,						// 0x__kk
-			y = kk >> 4,					// 0x__y_
 			n = kk&0xf,						// 0x___n
-			nnn = ((msb & 0xf) << 8) | lsb; // 0x_nnn
+			nnn = ((msb&0xf)<<8) | lsb; 	// 0x_nnn
 
 	// alliases for registers
 	byte &Vx = V[x], &Vy = V[y], &VF = V[0xF];
@@ -151,7 +161,7 @@ void Chip8::emulate_op() {
 				// 0x8xy4
 				case 0x4: // addr Vx, Vy
 					tmp = Vx + Vy;
-					VF = (tmp > 0xff); // VF (carry)
+					VF = (tmp > 0xff);
 					Vx += Vy;
 					break;
 
@@ -205,13 +215,37 @@ void Chip8::emulate_op() {
 			Vx = uniform_int_distribution<>(0, 255)(rnd) & kk;
 			break;
 
-
-		// TODO
-		// -----
 		// 0xDxyn
-		case 0xD: // draw Vx, Vy, n
-		break;
+		case 0xD: { // draw Vx, Vy, n
+			/*
+				Read n bytes from memory, starting at the address stored in I.
+				These bytes are then displayed as sprites on screen at coordinates (Vx, Vy), with width = 8 and height = n.
+				Sprites are XORed onto the existing screen. If this causes any pixels to be erased, VF is set to 1, otherwise it is set to 0.
+				If the sprite is positioned so part of it is outside the coordinates of the display, it wraps around to the opposite side of the screen.
+			*/
+			byte width = 8,
+				height = n,
+				*row_pixels = &memory[I];
 
+			int px, py;
+			for (int h = 0; h < height; ++h) {
+				py = Vy + h;
+
+				for (int w = 0; w < width; ++w) {
+					px = (Vx + w) % 64;
+
+					if (*row_pixels & (0b10000000 >> w)) { // checks if (8-w)'th bit is set
+						byte &pixel = screen[64*py + px];
+
+						VF = (pixel == 1),
+						pixel ^= 1;
+					}
+				}
+
+				++row_pixels;
+			}
+		}
+		break;
 
 		// 0xEx--
 		case 0xE: {
@@ -304,6 +338,7 @@ void Chip8::emulate_op() {
 		default:
 			not_handled(msb);
 	}
+	#undef not_handled
 
 	// Time & Sound
 
@@ -317,29 +352,3 @@ void Chip8::emulate_op() {
 		ST -= 1;
 	}
 }
-
-
-// TODO: Study screen display
-// TODO: Implement Draw
-// 
-// TODO: Study SDL
-// TODO: Waiting key
-// TODO: Beep Sound
-
-
-/*
-
-
-Dxyn - DRW Vx, Vy, nibble
-Display n-byte sprite starting at memory location I at (Vx, Vy), set VF = collision.
-
-The interpreter reads n bytes from memory, starting at the address stored in I. These bytes are then displayed as sprites on screen at coordinates (Vx, Vy).
-Sprites are XORed onto the existing screen. If this causes any pixels to be erased, VF is set to 1, otherwise it is set to 0.
-If the sprite is positioned so part of it is outside the coordinates of the display, it wraps around to the opposite side of the screen.
-
-See instruction 8xy3 for more information on XOR, and section 2.4, Display, for more information on the Chip-8 screen and sprites.
-
-
-*/
-
-
