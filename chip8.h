@@ -39,7 +39,6 @@ byte chip8_fonts[5*16] =
 class Chip8 {
 private:
 	byte memory[4*1024] = {0};		// 4KB RAM
-	byte V[16] = {0};
 
 	word I = 0;						// Index register
 	word PC = 0x200;				// Program Counter / Instruction pointer
@@ -53,7 +52,11 @@ private:
 	size_t program_size;
 
 public:
+	byte V[16] = {0};				// CPU registers
+
 	bool key_pressed[16];
+	byte awaitingKey = 0;
+
 	byte screen[64*32] = {0};
 
 	void emulate_op();

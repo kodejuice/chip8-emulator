@@ -15,7 +15,6 @@ mt19937 rnd{};
 
 // TODO: Implement emulator loop
 // TODO: Study SDL
-// TODO: Waiting key
 // TODO: Beep Sound
 
 /**
@@ -272,19 +271,9 @@ void Chip8::emulate_op() {
 					break;
 
 				// 0xFx0A
-				// TODO: Fix !
-				case 0x0A: { // waitkey Vx
-					bool p = 0;
-					for (int i = 0x0; i <= 0xF; ++i) {
-						if (key_pressed[i]) {
-							Vx=i, p=1;
-							break;
-						}
-					}
-
-					if (!p) return;
+				case 0x0A: // waitkey Vx
+					awaitingKey = 0x80 | x;
 					break;
-				}
 
 				// 0xFx15
 				case 0x15: // setdelay Vx
