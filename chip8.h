@@ -54,7 +54,7 @@ private:
 public:
 	byte V[16] = {0};				// CPU registers
 
-	bool key_pressed[16];
+	bool key_pressed[16] = {0};
 	byte awaitingKey = 0;
 
 	byte screen[64*32] = {0};
