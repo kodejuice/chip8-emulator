@@ -46,18 +46,20 @@ private:
 	word sp = 0;
 	word stack[16] = {0};
 
-	byte DT = 0;					// delay timer
-	byte ST = 0;					// sound timer
-
 	size_t program_size;
 
 public:
+	byte DT = 0;					// delay timer
+	byte ST = 0;					// sound timer
+
 	byte V[16] = {0};				// CPU registers
 
 	bool key_pressed[16] = {0};
 	byte awaitingKey = 0;
 
 	byte screen[64*32] = {0};
+
+	bool redraw;					// draw flag
 
 	void emulate_op();
 	bool load_program (std::string file);
