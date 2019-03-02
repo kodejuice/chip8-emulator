@@ -365,7 +365,4 @@ void Chip8::emulate_op() {
 	}
 	#undef not_handled
 
-    if (DT > 0) --DT;
-    if (ST > 0) --ST;
-
 }
