@@ -83,9 +83,14 @@ int main(int argc, char** argv) {
 
 	auto start = chrono::system_clock::now();
 	while (running) {
-		// execute if not waiting for input
+
+		/////////////////////////
+		// Execute Instruction //
+		/////////////////////////
 		if (!cpu.awaitingKey)
+			// if not waiting for input
 			cpu.emulate_op();
+
 
 		////////////////////
 		// Process events //
@@ -113,7 +118,6 @@ int main(int argc, char** argv) {
 		/////////////
 		// Render  //
 		/////////////
-
 		auto cur = chrono::system_clock::now();
 
 		chrono::duration<double> elapsed_seconds = cur-start;
