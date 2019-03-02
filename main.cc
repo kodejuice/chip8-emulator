@@ -125,8 +125,8 @@ int main(int argc, char** argv) {
 			frames_done += frames;
 
             // Update the timer registers
-            int st = min(frames, cpu.ST+0); cpu.ST -= st;
-            int dt = min(frames, cpu.DT+0); cpu.DT -= dt;
+            int st = min<int>(frames, cpu.ST); cpu.ST -= st;
+            int dt = min<int>(frames, cpu.DT); cpu.DT -= dt;
 
             //////////////////
             // Render audio //
