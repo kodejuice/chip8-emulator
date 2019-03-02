@@ -130,7 +130,6 @@ int main(int argc, char** argv) {
 
             //////////////////
             // Render audio //
-            //////////////////
             SDL_LockAudio();
              AudioQueue.emplace_back( obtained.freq*st/60,  true );
              AudioQueue.emplace_back( obtained.freq*(frames-st)/60, false );
@@ -138,7 +137,6 @@ int main(int argc, char** argv) {
 
 			/////////////////////
 			// Render graphics //
-			/////////////////////
 			if (cpu.redraw) {
 				renderTo(pixels, cpu.screen);
 				SDL_UpdateTexture(texture, nullptr, pixels, 4*w);
