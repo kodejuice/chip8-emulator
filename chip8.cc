@@ -61,7 +61,7 @@ void Chip8::emulate_op() {
 	int opcode = (memory[PC] << 8) | memory[PC+1];
 	int msb = opcode>>8, lsb = opcode&0xff;
 
-    printf("(%x) %x %x | pc = %x\n", opcode, memory[PC], memory[PC+1], PC);
+    // printf("(%x) %x %x | pc = %x\n", opcode, memory[PC], memory[PC+1], PC);
 
 	// Get bit-fields from instruction/opcode
 	int u   = (opcode>>12) & 0xF,
