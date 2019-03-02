@@ -61,6 +61,8 @@ void Chip8::emulate_op() {
 	int opcode = (memory[PC] << 8) | memory[PC+1];
 	int msb = opcode>>8, lsb = opcode&0xff;
 
+    printf("(%x) %x %x | pc = %x\n", opcode, memory[PC], memory[PC+1], PC);
+
 	// Get bit-fields from instruction/opcode
 	int u   = (opcode>>12) & 0xF,
 		x   = (opcode>>8) & 0xF,
@@ -79,6 +81,7 @@ void Chip8::emulate_op() {
 				// 0x00e0
 				case 0x0: // clr
 					memset(screen, 0, 2048);
+					redraw = true;
 					PC += 2;
 					break;
 
@@ -254,6 +257,7 @@ void Chip8::emulate_op() {
 				}
 				++row_pixels;
 			}
+			redraw = true;
 			PC += 2;
 		}
 		break;
@@ -360,5 +364,8 @@ void Chip8::emulate_op() {
 			not_handled(msb, lsb);
 	}
 	#undef not_handled
+
+    if (DT > 0) --DT;
+    if (ST > 0) --ST;
 
 }
