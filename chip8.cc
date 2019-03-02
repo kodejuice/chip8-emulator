@@ -240,7 +240,7 @@ void Chip8::emulate_op() {
 
 			int px, py;
 			for (int h = 0; h < height; ++h) {
-				py = Vy + h;
+				py = (Vy + h) % 32;
 
 				for (int w = 0; w < width; ++w) {
 					px = (Vx + w) % 64;
