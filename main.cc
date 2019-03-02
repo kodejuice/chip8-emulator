@@ -41,9 +41,7 @@ int main(int argc, char** argv) {
 	// GUI //
 	/////////
 
-	///////////////////
-	// create window //
-	///////////////////
+	// create window
 	string title = string(argv[1]);
 	SDL_Window* window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, W, H, SDL_WINDOW_RESIZABLE);
 	SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, 0); SDL_RenderSetLogicalSize(renderer, W, H);
