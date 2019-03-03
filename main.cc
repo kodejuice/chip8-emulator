@@ -9,6 +9,8 @@
 
 #include "SDL2/SDL.h"
 
+string getfilename(string);
+
 
 // chip8 screen size
 const int w = 64, h = 32;
@@ -58,8 +60,10 @@ int main(int argc, char** argv) {
 	// GUI //
 	/////////
 
+	string filename = getfilename(arg1);
+
 	// create window
-	string title = string(argv[1]);
+	string title = "Chip8 Emulator - " + filename;
 	SDL_Window* window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, W, H, SDL_WINDOW_RESIZABLE);
 	SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, 0); SDL_RenderSetLogicalSize(renderer, W, H);
 	SDL_Texture* texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, w, h);
@@ -169,4 +173,25 @@ int main(int argc, char** argv) {
 	}
 
 	return 0;
+}
+
+
+/**
+ * get filename from filepath
+ */
+string getfilename(const string filepath) {
+	string filename = filepath;
+
+	// Remove directory if present.
+	// Do this before extension removal incase directory has a period character.
+	const size_t last_slash_idx = filename.find_last_of("\\/");
+	if (std::string::npos != last_slash_idx)
+		filename.erase(0, last_slash_idx + 1);
+
+	// Remove extension if present.
+	const size_t period_idx = filename.rfind('.');
+	if (std::string::npos != period_idx)
+	    filename.erase(period_idx);
+
+	return filename;
 }
