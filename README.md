@@ -32,10 +32,15 @@ $ pacman -S sdl2
 $ make
 ```
 
-*Run*
+*Run a program*
 
 ```
 $ ./chip8 <program>
 ```
-
 The repo comes with a set of programs in the `roms/` directory.
+
+
+It also contains a disassembler you can use to decode a chip8 program into assembly instructions.
+```
+$ ./chip8 --decode <program>
+```
