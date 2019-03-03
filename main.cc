@@ -22,7 +22,7 @@ uint32_t pixels[w * h];
 // render screen in RGB buffer
 void renderTo(uint32_t* pixels, const byte* screen) {
 	for (int i = 0; i < w * h; ++i)
-		pixels[i] = (0x00FFFFFF * screen[i]) | 0xFF111111;
+		pixels[i] = (0x0033FF66 * screen[i]) | 0xFF111111;
 }
 
 
