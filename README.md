@@ -7,10 +7,10 @@ Chip-8 is a programming language for 8-bit computers developed in the 1970s. It 
 ![Tank](screenshots/tank.png "Tank")
 *Tank*
 
-![Brix](doc/screenshots/brix.png "Brix")
+![Brix](screenshots/brix.png "Brix")
 *Brix*
 
-![Pong](doc/screenshots/pong.png "Pong")
+![Pong](screenshots/pong.png "Pong")
 *Pong*
 
 ## Compiling
