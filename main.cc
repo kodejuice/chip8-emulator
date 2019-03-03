@@ -28,13 +28,30 @@ void renderTo(uint32_t* pixels, const byte* screen) {
 
 static deque<pair<unsigned,bool>> AudioQueue;
 
+
+#define COMMAND_USAGE\
+	return cout << "Command usage:\n ./chip8 <program>\n ./chip8 --decode <program>" << endl, 1;
+
+
 int main(int argc, char** argv) {
-	if (argc != 2)
-		return cout << "Command usage:\n ./chip8 <program>" << endl, 1;
+	if (argc < 2)
+		COMMAND_USAGE;
 
 	Chip8 cpu = Chip8();
-	if (!cpu.load_program(argv[1])) exit(1);
-	// cout << cpu.disassemble();
+
+	string arg1 = string(argv[1]);
+	if (arg1 == "--decode") {
+		// load/decode program
+		if (argc < 3) COMMAND_USAGE;
+		cpu.load_program(argv[2]);
+
+		cout << cpu.disassemble();
+		return 0;
+	}
+	else {
+		// load program
+		if (!cpu.load_program(arg1)) exit(1);
+	}
 
 
 	/////////
