@@ -55,6 +55,8 @@ int main(int argc, char** argv) {
 		if (!cpu.load_program(arg1)) exit(1);
 	}
 
+	printf("\nPress P to pause emulation.\n");
+
 
 	/////////
 	// GUI //
@@ -74,7 +76,7 @@ int main(int argc, char** argv) {
 		{SDLK_q, 0x4}, {SDLK_w, 0x5}, {SDLK_e, 0x6}, {SDLK_r, 0xD},
 		{SDLK_a, 0x7}, {SDLK_s, 0x8}, {SDLK_d, 0x9}, {SDLK_f, 0xE},
 		{SDLK_z, 0xA}, {SDLK_x, 0x0}, {SDLK_c, 0xB}, {SDLK_v, 0xF},
-		{SDLK_5, 0x5}, {SDLK_6, 0x6}, {SDLK_7, 0x7},
+		{SDLK_5, 0x5}, {SDLK_6, 0x6}, {SDLK_7, 0x7}, {SDLK_p, -2},
 		{SDLK_8, 0x8}, {SDLK_9, 0x9}, {SDLK_0, 0x0}, {SDLK_ESCAPE,-1}
 	};
 
@@ -97,8 +99,11 @@ int main(int argc, char** argv) {
 	SDL_PauseAudio(0);
 
 
-	bool running = true;
+	int msg = 0;
 	int frames_done = 0;
+	bool running = true,
+		 paused = false;
+
 
 	auto start = chrono::system_clock::now();
 	while (running) {
@@ -106,10 +111,14 @@ int main(int argc, char** argv) {
 		/////////////////////////
 		// Execute Instruction //
 		/////////////////////////
-		if (!cpu.awaitingKey)
+		if (!cpu.awaitingKey && !paused)
 			// if not waiting for input
 			cpu.emulate_op();
 
+		if (paused && !msg) {
+			printf("\nEmulation paused\n");
+			msg = 1;
+		}
 
 		////////////////////
 		// Process events //
@@ -122,8 +131,13 @@ int main(int argc, char** argv) {
 				case SDL_KEYUP:
 					auto i = keymap.find(ev.key.keysym.sym);
 
-					if(i == keymap.end()) break;
-					if(i->second == -1) { running = 0; break; }
+					if (i == keymap.end()) break;
+					if (i->second == -1) { running = 0; break; }
+					if (i->second == -2 && ev.type==SDL_KEYDOWN) {
+						paused=!paused, msg=0;
+						if (!paused) printf("Emulation continued\n");
+						break;
+					}
 
 					cpu.key_pressed[i->second] = (ev.type == SDL_KEYDOWN);
 
@@ -142,7 +156,7 @@ int main(int argc, char** argv) {
 		chrono::duration<double> elapsed_seconds = cur-start;
 		int frames = int(elapsed_seconds.count() * 60) - frames_done;
 
-		if (frames > 0) {
+		if (frames > 0 && !paused) {
 			frames_done += frames;
 
             // Update the timer registers
