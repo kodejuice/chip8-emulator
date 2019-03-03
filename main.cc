@@ -112,11 +112,11 @@ int main(int argc, char** argv) {
 		// Execute Instruction //
 		/////////////////////////
 		if (!cpu.awaitingKey && !paused)
-			// if not waiting for input
+			// if not waiting for input nor paused
 			cpu.emulate_op();
 
 		if (paused && !msg) {
-			printf("\nEmulation paused\n");
+			printf("\nPaused\n");
 			msg = 1;
 		}
 
@@ -135,7 +135,7 @@ int main(int argc, char** argv) {
 					if (i->second == -1) { running = 0; break; }
 					if (i->second == -2 && ev.type==SDL_KEYDOWN) {
 						paused=!paused, msg=0;
-						if (!paused) printf("Emulation continued\n");
+						if (!paused) printf("Resumed\n");
 						break;
 					}
 
@@ -183,7 +183,8 @@ int main(int argc, char** argv) {
 			}
 		}
 
-		this_thread::sleep_for(chrono::microseconds(1300));
+		if (!paused)
+			this_thread::sleep_for(chrono::microseconds(1300));
 	}
 
 	return 0;
